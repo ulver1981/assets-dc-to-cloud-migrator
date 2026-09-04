@@ -67,7 +67,7 @@ def request_json(
                 raise requests.HTTPError(_error_message(method, url, response),
                                          response=response) from exc
 
-        if response.status_code == 204:
+        if response.status_code == 204 or not response.content:
             return None
         return response.json()
 

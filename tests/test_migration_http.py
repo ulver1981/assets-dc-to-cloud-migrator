@@ -16,6 +16,7 @@ def response(status: int, body: dict | None = None, retry_after: str | None = No
     value.status_code = status
     value.reason = "status"
     value.text = "{}"
+    value.content = b'{"ok": true}' if body is not None else b""
     value.headers = {"Retry-After": retry_after} if retry_after else {}
     value.json.return_value = body or {}
     value.raise_for_status.side_effect = (
@@ -52,6 +53,14 @@ class RequestJsonTests(unittest.TestCase):
 
         with self.assertRaisesRegex(Exception, "GET https://example.test failed with 400"):
             migration_http.request_json(session, "GET", "https://example.test")
+
+    def test_accepts_successful_empty_response(self):
+        session = Mock()
+        session.request.return_value = response(200)
+
+        result = migration_http.request_json(session, "DELETE", "https://example.test")
+
+        self.assertIsNone(result)
 
 
 if __name__ == "__main__":
