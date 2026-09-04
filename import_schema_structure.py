@@ -667,6 +667,7 @@ def fix_type_value_refs(schema_name: str, exports_dir: Path, mappings_dir: Path,
     the correct typeValue. After fix-refs, re-run import-data to link obj-refs.
     """
     artifacts = SchemaArtifacts(schema_name, exports_dir, mappings_dir)
+    safe_name = safe_schema_name(schema_name)
     schema_dir = artifacts.schema_dir
     struct_file = artifacts.structure_file
     csv_dir = artifacts.csv_dir

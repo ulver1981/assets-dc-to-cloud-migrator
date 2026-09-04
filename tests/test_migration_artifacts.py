@@ -108,6 +108,37 @@ class MigrationArtifactTests(unittest.TestCase):
 
             self.assertIn("Run export-data before fix-refs.", output.getvalue())
 
+    @patch("import_schema_structure.config.validate")
+    def test_fix_refs_uses_normalized_mapping_name_after_prerequisites(self, validate):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            schema_name = "Test Schema"
+            schema_dir = base / "exports" / schema_name
+            mappings_dir = base / "mappings"
+            (schema_dir / "csv").mkdir(parents=True)
+            mappings_dir.mkdir()
+            (schema_dir / "schema_structure.json").write_text(
+                json.dumps({"schema": {"id": 1}, "objectTypes": []}),
+                encoding="utf-8",
+            )
+            (schema_dir / "_attr_meta.json").write_text("{}", encoding="utf-8")
+            (schema_dir / "csv" / "Example.csv").write_text(
+                "DC_Key,Name\nEX-1,Example\n", encoding="utf-8"
+            )
+            (mappings_dir / "Test_Schema_mapping.json").write_text(
+                json.dumps({"cloudSchemaId": "10", "objectTypeMapping": {}}),
+                encoding="utf-8",
+            )
+
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                import_schema_structure.fix_type_value_refs(
+                    schema_name, base / "exports", mappings_dir, dry_run=True
+                )
+
+            validate.assert_called_once()
+            self.assertIn("No fixes needed", output.getvalue())
+
     def test_malformed_object_mapping_is_not_silently_overwritten(self):
         with tempfile.TemporaryDirectory() as tmp:
             mapping_file = Path(tmp) / "objects.json"
