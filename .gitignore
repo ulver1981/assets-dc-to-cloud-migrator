@@ -18,3 +18,11 @@ __pycache__/
 exports/
 mappings/
 logs/
+
+# Synthetic fixtures are intentionally versioned for the offline demo.
+!fixtures/
+!fixtures/**/
+!fixtures/**/exports/
+!fixtures/**/exports/**
+!fixtures/**/mappings/
+!fixtures/**/mappings/**
