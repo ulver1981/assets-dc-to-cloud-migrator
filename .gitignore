@@ -1,0 +1,20 @@
+# Environment & secrets
+.env
+.env.*
+!.env.template
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# Migration data (large, environment-specific)
+exports/
+mappings/
+logs/

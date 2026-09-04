@@ -1,0 +1,12 @@
+name: Bug report
+description: Report a reproducible problem using safe data only.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, internal URLs, exports, mappings, logs, or production data.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Synthetic or redacted reproduction
+    validations:
+      required: true
