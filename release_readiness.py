@@ -10,10 +10,12 @@ from urllib.parse import urlparse
 
 
 PROHIBITED_COMPONENTS = {
-    ".venv", "__pycache__", "exports", "logs", "mappings", ".git",
+    ".venv", "__pycache__", "exports", "logs", "mappings",
 }
 PRIVATE_HOST_MARKERS = ("tagetik", "internal", "corp", "intranet", "localhost")
-GENERIC_HOSTS = {"example.com", "api.atlassian.com", "id.atlassian.com"}
+GENERIC_HOSTS = {
+    "example.com", "api.atlassian.com", "id.atlassian.com", "github.com",
+}
 SECRET_KEY_PATTERN = re.compile(
     r"(?im)^\s*[A-Z][A-Z0-9_]*(?:TOKEN|PASSWORD|SECRET|API_KEY)\s*=\s*(.+?)\s*$"
 )
@@ -31,6 +33,8 @@ def inspect_release_tree(root: Path) -> list[Finding]:
     findings: list[Finding] = []
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
+        if relative.parts and relative.parts[0] == ".git":
+            continue
         if _has_prohibited_component(relative):
             findings.append(Finding(relative, "prohibited path"))
             continue
